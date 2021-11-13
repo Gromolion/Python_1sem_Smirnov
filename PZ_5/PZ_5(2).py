@@ -10,4 +10,4 @@ def digitcountsum(k):
 
 # пример работы функции:
 for n in range(5):
-    print('Количество цифр: {}. Сумма цифр: {}'.format(*digitcountsum(input('Введите число: '))))
+    print('Количество цифр: {}. Сумма цифр: {}'.format(*digitcountsum(input('Введите положительное число: '))))

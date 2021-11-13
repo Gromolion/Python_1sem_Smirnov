@@ -7,7 +7,7 @@ def summa(x, y):
 
 n, m = input('Введите числа n и m: ').split()
 
-while type(n) != int or type(m) != int:
+while type(n) != int or type(m) != int and :
     # обработка исключений
     try:
         n = int(n)
