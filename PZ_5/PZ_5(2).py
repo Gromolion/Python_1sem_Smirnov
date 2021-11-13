@@ -8,6 +8,7 @@ def digitcountsum(k):
     return c, s
 
 
-# пример работы функции:
 for n in range(5):
-    print('Количество цифр: {}. Сумма цифр: {}'.format(*digitcountsum(input('Введите положительное число: '))))
+    number = input('Введите положительное число: ')
+    print('Количество цифр: {}. Сумма цифр: {}'.format(*digitcountsum(number)))
+    # в каждой итерации цикла мы выводим форматированную строку со значениями, которые вернула функция digitcountsum()
