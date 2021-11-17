@@ -4,11 +4,13 @@
 import random
 
 n = int(input('Введите длину списка: '))
-mylist = [random.randint(1, 2) for el in range(n)]
+mylist = [random.randint(1, 100) for el in range(n)]
+# генерируем список с рандомными целыми числами от 1 до 100, длиной n
 result = 0
-# выводим список для наглядности
 for i in range(1, len(mylist)):
     if mylist[i - 1] % 2 == mylist[i] % 2:
+        # если остаток от деления на два предыдущего элемента списка
+        # равен остатку от деления на два текущего элемента списка, то:
         result = i
         break
-print(result)
+print(result if result == 0 else f'Последовательность нарушилась на {result} элементе списка')

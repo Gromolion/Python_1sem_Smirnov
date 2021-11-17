@@ -6,5 +6,7 @@ import random
 n = int(input('Введите длину списков: '))
 a = [random.randint(1, 100) for i in range(n)]
 b = [random.randint(1, 100) for i in range(n)]
+# генерируем два списка с рандомными целыми числами от 1 до 100, длиной n
 c = [max(a[i], b[i]) for i in range(n)]
+# генерируем список, i-ый элемент которого равен максимальному из i-ых элементов списков a и b
 print(c)
