@@ -4,7 +4,7 @@ n1 = int(input('Введите n1: '))
 n2 = int(input('Введите n2: '))
 a = {(random.randint(-100, 100), random.randint(-100, 100)) for i in range(n1)}
 b = {(random.randint(-100, 100), random.randint(-100, 100)) for j in range(n2)}
-minR = 999999
+minR = 99999
 minR_point1 = tuple()
 minR_point2 = tuple()
 for point1 in a:
