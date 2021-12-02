@@ -6,6 +6,7 @@ import random
 n = int(input('Введите длину списка: '))
 mylist = [random.randint(1, 100) for el in range(n)]
 # генерируем список с рандомными целыми числами от 1 до 100, длиной n
+print(f'Список: {mylist}')
 result = 0
 for i in range(1, len(mylist)):
     if mylist[i - 1] % 2 == mylist[i] % 2:
