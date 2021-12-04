@@ -22,8 +22,8 @@ with open('result.txt', 'w') as r:
         r.write(f'Элементы первого и второго файлов:\n{" ".join(buff)}\n')
         r.write(f'Элементы после сортировки:\n{" ".join(sorted(buff))}\n')
         r.write(f'Количество элементов: {len(buff)}\n')
-        r.write(f'Минимальный элемент кратный 2: {min([i for i in buff if int(i) % 2 == 0])}\n')
+        r.write(f'Минимальный элемент кратный 2: {min([int(i) for i in buff if int(i) % 2 == 0])}\n')
         # создаю список из элементов buff, кратных 2, и нахожу минимальный из них
-        r.write(f'Максимальный элемент кратный 5: {max([i for i in buff if int(i) % 5 == 0])}')
+        r.write(f'Максимальный элемент кратный 5: {max([int(i) for i in buff if int(i) % 5 == 0])}')
         # создаю список из элементов buff, кратных 5, и нахожу максимальный из них
 
