@@ -4,7 +4,6 @@
 with open('text18-25.txt', 'r', encoding='utf-16') as inp:
     content = inp.read()
     print(content)
-    sum_alph = len([i for i in content if i.isalpha()])
-    print(f'Количество букв: {sum_alph}')
+    print(f'Количество букв: {len([i for i in content if i.isalpha()])}')
 with open('result2.txt', 'w') as r:
     r.write(content.replace('с', ''))
