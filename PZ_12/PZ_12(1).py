@@ -1,8 +1,10 @@
 from tkinter import *
 
+
 root = Tk()
 root.title('Форма заявки')
 root.geometry('550x470+500+100')
+
 
 frame1 = Frame(highlightthickness=1,
                highlightbackground="#64D8D1",
