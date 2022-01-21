@@ -11,10 +11,10 @@ from random import randint
 if input('Сгенерировать файлы заново? ').upper() == 'Да'.upper():
     with open('first.txt', 'w') as f:
         f.write(' '.join([str(randint(-1000, 1000)) for i in range(randint(1, 20))]))
-    # создаю первый файл с рандомной последовательностью чисел от -100 от 100
+    # создаю первый файл с рандомной последовательностью чисел от -1000 от 1000
     with open('second.txt', 'w') as f:
         f.write(' '.join([str(randint(-1000, 1000)) for i in range(randint(1, 20))]))
-    # создаю второй файл с рандомной последовательностью чисел от -100 от 100
+    # создаю второй файл с рандомной последовательностью чисел от -1000 от 1000
 with open('result.txt', 'w') as r:
     with open('first.txt', 'r') as f1, open('second.txt', 'r') as f2:
         buff = f1.readline().split() + f2.readline().split()
