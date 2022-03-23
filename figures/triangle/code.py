@@ -1,15 +1,14 @@
 from math import sqrt
 
-__all__ = ['triangle_perimeter', 'triangle_area']
-a = 7
-b = 2
-c = 8
+_a = 7
+_b = 2
+_c = 8
 
 
-def triangle_perimeter(first=a, second=b, third=c):
+def triangle_perimeter(first=_a, second=_b, third=_c):
     return first + second + third
 
 
-def triangle_area(first=a, second=b, third=c):
+def triangle_area(first=_a, second=_b, third=_c):
     p = (first + second + third)
     return sqrt(p * (p - first) * (p - second) * (p - third))
