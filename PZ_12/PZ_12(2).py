@@ -1,8 +1,8 @@
 # разработать программу с применением пакета tk, взяв в качестве условия
 # одну любую задачу из ПЗ №3-8.
 
-from tkinter import *
-from tkinter import messagebox
+from test import *
+from test import messagebox
 
 
 def show_msg():

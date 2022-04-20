@@ -2,7 +2,7 @@
 # его в IDE PyCharm Community с применением пакета tk. Получить интерфейс
 # максимально приближенный к оригиналу (см. таблицу 1).
 
-from tkinter import *
+from test import *
 
 root = Tk()
 root.title('Форма заявки')
