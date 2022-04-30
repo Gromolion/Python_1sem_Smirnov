@@ -6,8 +6,10 @@ class AddChild(tk.Toplevel):
 
     """Класс для дочернего окна"""
 
-    def __init__(self, root):
+    def __init__(self, root, con):
         super().__init__(root)
+
+        self.con = con
 
         self.title('Добавить игрока')
         self.geometry('400x220+400+300')
@@ -37,21 +39,33 @@ class AddChild(tk.Toplevel):
         self.btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
         self.btn_cancel.place(x=300, y=170)
 
-        self.btn_ok = ttk.Button(self, text='Добавить')
+        self.btn_ok = ttk.Button(self, text='Добавить', command=self.add)
         self.btn_ok.place(x=220, y=170)
         self.btn_ok.bind('<Button-1>')
 
         self.grab_set()
         self.focus_set()
 
+    def add(self):
+        cur = self.con.cursor()
+        number = self.entry_description.get()
+        name = self.entry_name.get()
+        sex = self.combobox.current()
+        old = self.entry_old.get()
+        cur.execute(f"INSERT INTO users VALUES ({number}, '{name}', {sex}, {old}, 0)")
+        self.con.commit()
+        self.entry_description.config()
+
 
 class SearchChild(tk.Toplevel):
 
-    def __init__(self, root):
+    def __init__(self, root, con):
         super().__init__(root)
 
+        self.con = con
+
         self.title('Найти игрока')
-        self.geometry('250x90+400+300')
+        self.geometry('220x90+400+300')
         self.resizable(False, False)
 
         self.label_description = tk.Label(self, text='Поиск')
@@ -60,7 +74,10 @@ class SearchChild(tk.Toplevel):
         self.entry_name.place(x=80, y=20)
 
         self.btn_search = ttk.Button(self, text='Поиск')
-        self.btn_search.place(x=70, y=50)
+        self.btn_search.place(x=60, y=50)
 
         self.btn_cancel = ttk.Button(self, text='Отмена', command=self.destroy)
-        self.btn_cancel.place(x=150, y=50)
+        self.btn_cancel.place(x=140, y=50)
+
+    def search(self):
+        cur = self.con.cursor()
