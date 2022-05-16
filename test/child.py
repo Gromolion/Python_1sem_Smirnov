@@ -36,6 +36,11 @@ class AddChild(tk.Toplevel):
         self.entry_old = ttk.Entry(self)
         self.entry_old.place(x=110, y=100)
 
+        self.label_score = tk.Label(self, text='Результат')
+        self.label_score.place(x=50, y=125)
+        self.entry_score = ttk.Entry(self)
+        self.entry_score.place(x=110, y=125)
+
         self.btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
         self.btn_cancel.place(x=300, y=170)
 
@@ -52,9 +57,29 @@ class AddChild(tk.Toplevel):
         name = self.entry_name.get()
         sex = self.combobox.current()
         old = self.entry_old.get()
-        cur.execute(f"INSERT INTO users VALUES ({number}, '{name}', {sex}, {old}, 0)")
+        score = self.entry_score.get()
+        cur.execute(f"INSERT INTO users VALUES ({number}, '{name}', {sex}, {old}, {score})")
         self.con.commit()
-        self.entry_description.config()
+
+
+class UpdateChild(AddChild):
+    def __init__(self, root, con, app):
+        super(UpdateChild, self).__init__(root, con)
+        self.app = app
+        self.title('Редактировать запись')
+        self.btn_edit = ttk.Button(self, text="Редактировать")
+        self.btn_edit.place(x=205, y=170)
+        self.btn_edit.bind('<Button-1>', lambda event: self.update())
+        self.btn_ok.destroy()
+
+    def update(self):
+        self.app.update(self.entry_description.get(),
+                        self.entry_name.get(),
+                        self.combobox.get(),
+                        self.entry_old.get(),
+                        self.entry_score.get())
+        self.app.refresh()
+        self.destroy()
 
 
 class SearchChild(tk.Toplevel):
@@ -73,7 +98,7 @@ class SearchChild(tk.Toplevel):
         self.entry_name = ttk.Entry(self)
         self.entry_name.place(x=80, y=20)
 
-        self.btn_search = ttk.Button(self, text='Поиск')
+        self.btn_search = ttk.Button(self, text='Поиск', command=self.search)
         self.btn_search.place(x=60, y=50)
 
         self.btn_cancel = ttk.Button(self, text='Отмена', command=self.destroy)
@@ -81,3 +106,33 @@ class SearchChild(tk.Toplevel):
 
     def search(self):
         cur = self.con.cursor()
+        data = self.entry_name.get()
+        cur.execute(f"SELECT * FROM users WHERE name LIKE '%{data}%'")
+        users = cur.fetchall()
+
+        self.geometry('400x150+400+300')
+
+        self.entry_name.destroy()
+        self.label_description.destroy()
+        self.btn_search.destroy()
+        self.btn_cancel.destroy()
+
+        tree = ttk.Treeview(self, columns=('user_id', 'name', 'sex', 'old', 'score'), height=4, show='headings')
+        tree.column('user_id', width=25, anchor=tk.CENTER)
+        tree.column('name', width=89, anchor=tk.CENTER)
+        tree.column('sex', width=87, anchor=tk.CENTER)
+        tree.column('old', width=95, anchor=tk.CENTER)
+        tree.column('score', width=102, anchor=tk.CENTER)
+        tree.heading('user_id', text='ID')
+        tree.heading('name', text='Имя игрока')
+        tree.heading('sex', text='Пол игрока')
+        tree.heading('old', text='Возраст игрока')
+        tree.heading('score', text='Результат игрока')
+        tree.pack()
+
+        for row in users:
+            tree.insert('', 'end', values=row)
+
+        btn_quit = ttk.Button(self, text='Выйти', command=self.destroy)
+        btn_quit.place(x=300, y=110)
+

@@ -24,7 +24,7 @@ class Main(tk.Frame):
         self.btn_open_dialog_search.pack(side=tk.LEFT, padx=5)
 
         self.refresh_img = tk.PhotoImage(file='BD/refresh.png')
-        self.btn_open_dialog_refresh = tk.Button(self.toolbar, text='Обновить', command=self.open_dialog_refresh,
+        self.btn_open_dialog_refresh = tk.Button(self.toolbar, text='Обновить', command=self.refresh,
                                                  bg='#5da130', bd=0, compound=tk.TOP, image=self.refresh_img)
         self.btn_open_dialog_refresh.pack(side=tk.RIGHT)
 
@@ -42,35 +42,30 @@ class Main(tk.Frame):
         self.tree.heading('old', text='Возраст игрока')
         self.tree.heading('score', text='Результат игрока')
 
-        ysb = ttk.Scrollbar(self, orient=tk.VERTICAL, command=self.tree.yview)
-        self.tree.configure(yscroll=ysb.set)
-
         self.db.cur.execute('SELECT * FROM users')
-        self.iid = 1
         for row in self.db.cur.fetchall():
-            self.tree.insert('', 'end', values=row, iid=str(self.iid))
-            self.iid += 1
-            self.tree.bind('<<Double-Button-1>>', self.player_update)
+            self.tree.insert('', 'end', values=row)
+            self.tree.bind('<<TreeviewSelect>>', lambda event: UpdateChild(self, self.db.con, app))
 
         self.tree.pack()
 
-    def player_update(self, a):
-        print(1)
+    def update(self, user_id, name, sex, old, score):
+        self.db.cur.execute("""UPDATE users SET user_id=?, name=?, sex=?, old=?, score=? WHERE user_id=?""",
+                            (user_id, name, sex, old, score, self.tree.set(self.tree.selection()[0], '#1')))
+        self.db.con.commit()
 
     def open_dialog_add(self):
         AddChild(self, self.db.con)
-        self.open_dialog_refresh()
+        self.refresh()
 
     def open_dialog_search(self):
         SearchChild(self, self.db.con)
 
-    def open_dialog_refresh(self):
+    def refresh(self):
         [self.tree.delete(i) for i in self.tree.get_children()]
         self.db.cur.execute('SELECT * FROM users')
-        self.iid = 1
         for row in self.db.cur.fetchall():
-            self.tree.insert('', 'end', values=row, iid=str(self.iid))
-            self.iid += 1
+            self.tree.insert('', 'end', values=row)
 
 
 class DB:
