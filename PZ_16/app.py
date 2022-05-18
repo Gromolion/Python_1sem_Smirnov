@@ -1,3 +1,4 @@
+import re
 import tkinter as tk
 from tkinter import ttk
 import sqlite3 as sq
@@ -14,28 +15,30 @@ class Main(tk.Frame):
         self.toolbar.pack(side=tk.TOP, fill=tk.X)
 
         self.add_img = tk.PhotoImage(file="DB/add.png")
-        self.btn_open_dialog = tk.Button(self.toolbar, text='Добавить запись', command=self.open_dialog, bg='#00A08A', bd=0,
+        self.btn_open_dialog = tk.Button(self.toolbar, text='Добавить запись', command=self.open_dialog, bg='#00A08A',
+                                         bd=0,
                                          compound=tk.TOP, image=self.add_img)
         self.btn_open_dialog.pack(side=tk.LEFT, padx=20)
 
         self.update_img = tk.PhotoImage(file="DB/edit.png")
-        self.btn_edit_dialog = tk.Button(self.toolbar, text="Редактировать", command=self.open_update_dialog, bg='#00A08A',
-                                    bd=0, compound=tk.TOP, image=self.update_img)
+        self.btn_edit_dialog = tk.Button(self.toolbar, text="Редактировать", command=self.open_update_dialog,
+                                         bg='#00A08A',
+                                         bd=0, compound=tk.TOP, image=self.update_img)
         self.btn_edit_dialog.pack(side=tk.LEFT, padx=20)
 
         self.delete_img = tk.PhotoImage(file="DB/delete.png")
         self.btn_delete = tk.Button(self.toolbar, text="Удалить запись", command=self.delete_records, bg='#00A08A',
-                               bd=0, compound=tk.TOP, image=self.delete_img)
+                                    bd=0, compound=tk.TOP, image=self.delete_img)
         self.btn_delete.pack(side=tk.LEFT, padx=20)
 
         self.search_img = tk.PhotoImage(file="DB/search.png")
         self.btn_search = tk.Button(self.toolbar, text="Поиск записи", command=self.open_search_dialog, bg='#00A08A',
-                               bd=0, compound=tk.TOP, image=self.search_img)
+                                    bd=0, compound=tk.TOP, image=self.search_img)
         self.btn_search.pack(side=tk.LEFT, padx=20)
 
         self.refresh_img = tk.PhotoImage(file="DB/refresh.png")
         self.btn_refresh = tk.Button(self.toolbar, text="Обновить экран", command=self.view_records, bg='#00A08A',
-                                bd=0, compound=tk.TOP, image=self.refresh_img)
+                                     bd=0, compound=tk.TOP, image=self.refresh_img)
         self.btn_refresh.pack(side=tk.LEFT, padx=20)
 
         self.tree = ttk.Treeview(self, columns=('id', 'patient_name', 'doctor_name', 'diagnosis', 'cost'), height=15,
@@ -79,8 +82,8 @@ class Main(tk.Frame):
         self.db.con.commit()
         self.view_records()
 
-    def search_records(self, cost):
-        self.db.cur.execute(f"SELECT * FROM patients WHERE cost > {cost}")
+    def search_records(self, type, cost):
+        self.db.cur.execute(f"SELECT * FROM patients WHERE cost {type} {cost}")
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('', 'end', values=row) for row in self.db.cur.fetchall()]
 
@@ -88,7 +91,8 @@ class Main(tk.Frame):
         Child(root, app)
 
     def open_update_dialog(self):
-        self.db.cur.execute("SELECT * FROM patients WHERE id=?", self.tree.set([i for i in self.tree.selection()][0], '#1'))
+        self.db.cur.execute("SELECT * FROM patients WHERE id=?",
+                            self.tree.set([i for i in self.tree.selection()][0], '#1'))
         Update(self.db.cur.fetchall()[0])
 
     def open_search_dialog(self):
@@ -150,7 +154,6 @@ class Update(Child):
     def __init__(self, fields):
         super().__init__(root, app)
         self.view = app
-        print(fields)
         self.entry_id.insert(0, fields[0])
         self.entry_patient.insert(0, fields[1])
         self.entry_doctor.insert(0, fields[2])
@@ -161,10 +164,10 @@ class Update(Child):
         self.btn_edit = ttk.Button(self, text="Редактировать")
         self.btn_edit.place(x=205, y=170)
         self.btn_edit.bind('<Button-1>', lambda event: self.view.update_record(self.entry_id.get(),
-                                                                          self.entry_patient.get(),
-                                                                          self.entry_doctor.get(),
-                                                                          self.entry_diagnosis.get(),
-                                                                          self.entry_cost.get()))
+                                                                               self.entry_patient.get(),
+                                                                               self.entry_doctor.get(),
+                                                                               self.entry_diagnosis.get(),
+                                                                               self.entry_cost.get()))
         self.btn_ok.destroy()
 
 
@@ -177,15 +180,19 @@ class Search(tk.Toplevel):
         self.geometry("300x100+400+300")
         self.resizable(False, False)
 
-        self.label_search = tk.Label(self, text="Поиск")
-        self.label_search.place(x=50, y=20)
+        self.label_search = tk.Label(self, text="Стоимость")
+        self.label_search.place(x=30, y=20)
+
+        self.search_type = ttk.Combobox(self, values=['=', '>', '<', '>=', '<='], width=3, state='readonly')
+        self.search_type.place(x=100, y=20)
+        self.search_type.current(1)
 
         self.entry_search = ttk.Entry(self)
-        self.entry_search.place(x=105, y=20, width=150)
+        self.entry_search.place(x=140, y=20, width=150)
 
-        self.btn_search = ttk.Button(self, text="Поиск по стоимости")
+        self.btn_search = ttk.Button(self, text="Поиск")
         self.btn_search.place(x=105, y=50)
-        self.btn_search.bind('<Button-1>', lambda event: self.view.search_records(self.entry_search.get()))
+        self.btn_search.bind('<Button-1>', lambda event: self.view.search_records(self.search_type.get(), self.entry_search.get()))
 
 
 class DB:
@@ -201,8 +208,9 @@ class DB:
                 )""")
 
     def insert_data(self, id, patient_name, doctor_name, diagnosis, cost):
-        self.cur.execute("""INSERT INTO patients(id, patient_name, doctor_name, diagnosis, cost) VALUES (?, ?, ?, ?, ?)""",
-                         (id, patient_name, doctor_name, diagnosis, cost))
+        self.cur.execute(
+            """INSERT INTO patients(id, patient_name, doctor_name, diagnosis, cost) VALUES (?, ?, ?, ?, ?)""",
+            (id, patient_name, doctor_name, diagnosis, cost))
         self.con.commit()
 
 
