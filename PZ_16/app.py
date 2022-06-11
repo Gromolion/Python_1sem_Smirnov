@@ -60,14 +60,14 @@ class Main(tk.Frame):
 
         self.view_records()
 
-    def records(self, id, patient_name, doctor_name, diagnosis, cost):
-        self.db.insert_data(id, patient_name, doctor_name, diagnosis, cost)
+    def records(self, patient_name, doctor_name, diagnosis, cost):
+        self.db.insert_data(patient_name, doctor_name, diagnosis, cost)
         self.view_records()
 
-    def update_record(self, id, patient_name, doctor_name, diagnosis, cost):
+    def update_record(self, patient_name, doctor_name, diagnosis, cost):
         self.db.cur.execute(
-            """UPDATE patients SET id=?, patient_name=?, doctor_name=?, diagnosis=?, cost=? WHERE id=?""",
-            (id, patient_name, doctor_name, diagnosis, cost, self.tree.set(self.tree.selection()[0], '#1')))
+            """UPDATE patients SET patient_name=?, doctor_name=?, diagnosis=?, cost=? WHERE id=?""",
+            (patient_name, doctor_name, diagnosis, cost, self.tree.set(self.tree.selection()[0], '#1')))
         self.db.con.commit()
         self.view_records()
 
@@ -110,11 +110,6 @@ class Child(tk.Toplevel):
         self.geometry('400x220+400+300')
         self.resizable(False, False)
 
-        self.label_id = tk.Label(self, text='Номер')
-        self.label_id.place(x=50, y=25)
-        self.entry_id = ttk.Entry(self)
-        self.entry_id.place(x=140, y=25)
-
         self.label_patient = tk.Label(self, text='Имя пациента')
         self.label_patient.place(x=50, y=50)
         self.entry_patient = ttk.Entry(self)
@@ -140,8 +135,7 @@ class Child(tk.Toplevel):
 
         self.btn_ok = ttk.Button(self, text='Добавить')
         self.btn_ok.place(x=220, y=170)
-        self.btn_ok.bind('<Button-1>', lambda event: self.view.records(self.entry_id.get(),
-                                                                       self.entry_patient.get(),
+        self.btn_ok.bind('<Button-1>', lambda event: self.view.records(self.entry_patient.get(),
                                                                        self.entry_doctor.get(),
                                                                        self.entry_diagnosis.get(),
                                                                        self.entry_cost.get()))
@@ -154,7 +148,6 @@ class Update(Child):
     def __init__(self, fields):
         super().__init__(root, app)
         self.view = app
-        self.entry_id.insert(0, fields[0])
         self.entry_patient.insert(0, fields[1])
         self.entry_doctor.insert(0, fields[2])
         self.entry_diagnosis.insert(0, fields[3])
@@ -163,8 +156,7 @@ class Update(Child):
         self.title("Редактировать запись")
         self.btn_edit = ttk.Button(self, text="Редактировать")
         self.btn_edit.place(x=205, y=170)
-        self.btn_edit.bind('<Button-1>', lambda event: self.view.update_record(self.entry_id.get(),
-                                                                               self.entry_patient.get(),
+        self.btn_edit.bind('<Button-1>', lambda event: self.view.update_record(self.entry_patient.get(),
                                                                                self.entry_doctor.get(),
                                                                                self.entry_diagnosis.get(),
                                                                                self.entry_cost.get()))
@@ -207,10 +199,10 @@ class DB:
                 cost INTEGER
                 )""")
 
-    def insert_data(self, id, patient_name, doctor_name, diagnosis, cost):
+    def insert_data(self, patient_name, doctor_name, diagnosis, cost):
         self.cur.execute(
-            """INSERT INTO patients(id, patient_name, doctor_name, diagnosis, cost) VALUES (?, ?, ?, ?, ?)""",
-            (id, patient_name, doctor_name, diagnosis, cost))
+            """INSERT INTO patients(patient_name, doctor_name, diagnosis, cost) VALUES (?, ?, ?, ?)""",
+            (patient_name, doctor_name, diagnosis, cost))
         self.con.commit()
 
 
