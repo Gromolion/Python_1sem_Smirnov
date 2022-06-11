@@ -23,7 +23,7 @@ def fib(n, buff=[1, 1]):
     num1 = buff[-1]
     num2 = buff[-2]
 
-    if (num1 + num2) < n:
+    if (num1 + num2) <= n:
         buff += [num1 + num2]
         return fib(n, buff)
     else:
